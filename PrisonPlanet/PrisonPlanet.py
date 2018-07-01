@@ -1,21 +1,28 @@
 from player import Player
+import world
 
 def get_player_command():
     return input('Action: ').lower()
 
 def play():
     print("Escape the Prison Planet!")
+    
     player = Player()
+
     while True:
+        room = world.tile_at(player.x, player.y)
+        print(room.intro_text())
+
         action_input = get_player_command()
+
         if action_input == 'n':
-            print("Go North")
+            player.move_north()
         elif action_input == 's':
-            print("Go South")
+            player.move_south()
         elif action_input == 'e':
-            print("Go East")
+            player.move_east()
         elif action_input == 'w':
-            print("Go West")
+            player.move_west()
         elif action_input == 'i':
             print("Inventory: ")
             pretty_print_unordered(player.inventory)
