@@ -1,10 +1,27 @@
+class Consumable:
+    def __init__(self):
+        raise NotImplementedError("Do not create raw consumables - they give one indigestion")
+
+    def __str__(self):
+        return "{} + ({} HP)".format(self.name, self.healing_value)
+
+class Manna(Consumable):
+    def __init__(self):
+        self.name = "manna"
+        self.healing_value = 10
+
+class Medpack(Consumable):
+    def __init__(self):
+        self.name = "medpack"
+        self.healing_value = 50
+
+
 class Weapon:
     def __init__(self):
         raise NotImplementedError("Do not create raw weapon objects")
 
     def __str__(self):
         return self.name
-
 
 class Crysknife(Weapon):
     def __init__(self):

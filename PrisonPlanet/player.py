@@ -1,13 +1,26 @@
 import items
+import world
 
 class Player:
     def __init__(self):
         self.inventory = [items.Crysknife(),
                           items.Stunner(),
                           'Credits(5)',
-                          'Manna']
+                          items.Manna]
         self.x = 1
         self.y = 2
+        self.hp = 100
+
+    def attack(self):
+        best_weapon = self.most_powerful_weapon()
+        room = world.tile_at(self.x, self.y)
+        enemy = room.enemy
+        print("You use {} against {}!".format(best_weapon.name, enemy.name))
+        enemy.hp -= best_weapon.damage
+        if not enemy.is_alive():
+            print("You killed {}!".format(enemy.name))
+        else:
+            print("{} HP is {}.".format(enemy.name, enemy.hp))
 
     def most_powerful_weapon(self):
         max_damage = 0

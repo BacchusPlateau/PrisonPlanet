@@ -21,6 +21,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="enemies.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="items.py">
       <SubType>Code</SubType>
     </Compile>
