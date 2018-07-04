@@ -7,12 +7,12 @@ class Consumable:
 
 class Manna(Consumable):
     def __init__(self):
-        self.name = "manna"
+        self.name = "Manna"
         self.healing_value = 10
 
 class Medpack(Consumable):
     def __init__(self):
-        self.name = "medpack"
+        self.name = "Medpack"
         self.healing_value = 50
 
 

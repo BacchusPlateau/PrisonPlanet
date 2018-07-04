@@ -15,6 +15,7 @@ def play():
         room.modify_player(player)
         action_input = get_player_command()
 
+        #movement
         if action_input == 'n':
             player.move_north()
         elif action_input == 's':
@@ -25,6 +26,10 @@ def play():
             player.move_west()
         elif action_input == 'a':
             player.attack()
+
+        #other actions
+        elif action_input == 'h':
+            player.heal()
         elif action_input == 'i':
             print("Inventory: ")
             pretty_print_unordered(player.inventory)
