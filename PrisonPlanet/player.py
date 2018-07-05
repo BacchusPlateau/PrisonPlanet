@@ -2,6 +2,9 @@ import items
 import world
 
 class Player:
+    MAX_HITPOINTS = 100
+    QUIT_ACTION = False
+
     def __init__(self):
         self.inventory = [items.Crysknife(),
                           items.Stunner(),
@@ -9,7 +12,7 @@ class Player:
                           items.Manna()]
         self.x = 1
         self.y = 2
-        self.hp = 100
+        self.hp = self.MAX_HITPOINTS
 
     def attack(self):
         best_weapon = self.most_powerful_weapon()
@@ -38,7 +41,7 @@ class Player:
             choice = input("")
             try:
                 to_eat = consumables[int(choice) -1]
-                self.hp = min(100, self.hp + to_eat.healing_value)
+                self.hp = min(self.MAX_HITPOINTS, self.hp + to_eat.healing_value)
                 self.inventory.remove(to_eat)
                 print("Current HP: {}".format(self.hp))
                 valid = True
@@ -65,6 +68,9 @@ class Player:
         best_weapon = self.most_powerful_weapon()
         print("Your best weapon is your {}".format(best_weapon))
 
+    def quit(self):
+        self.QUIT_ACTION = True
+ 
     def move(self, dx, dy):
         self.x += dx
         self.y += dy

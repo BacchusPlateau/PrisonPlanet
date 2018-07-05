@@ -66,16 +66,58 @@ class StartTile(MapTile):
 class VictoryTile(MapTile):
     def intro_text(self):
         return """
-        The stolen spacecraft roars into outer space and freedom!
+        The stolen spacecraft roars into outer space and to freedom!
         You've escaped from the Prison Planet.
         """
 
-world_map = [
-    [None, VictoryTile(1,0), None],
-    [None, EnemyTile(1,1), None],
-    [EnemyTile(0,2), StartTile(1,2), EnemyTile(2,2)],
-    [None, EnemyTile(1,3), None]
-]
+world_dsl = """
+|  |VT|  |
+|  |EN|  |
+|EN|ST|EN|
+|  |EN|  |
+"""
+
+world_map = []
+
+tile_type_dict = {"VT" : VictoryTile,
+                  "EN" : EnemyTile,
+                  "ST" : StartTile,
+                  "  " : None}
+
+def is_dsl_valid(dsl):
+    if dsl.count("|ST|") != 1:
+        return False
+
+    if dsl.count("|VT|") != 1:
+        return False
+
+    lines = dsl.splitlines()            # count the number of lines in a string
+    lines = [l for l in lines if l]     # "if l" is shorthand for "if l != ''"
+    pipe_counts = [line.count("|") for line in lines]
+
+    for count in pipe_counts:
+        if count != pipe_counts[0]:
+            return False
+
+    return True
+
+def parse_world_dsl():
+    if not is_dsl_valid(world_dsl): #curious why the author didn't use global scope for accessing world_dsl - he did it in this function then passed it by ref to another.
+        raise SyntaxError("DSL is invalid.")
+
+    dsl_lines = world_dsl.splitlines()
+    dsl_lines = [x for x in dsl_lines if x]
+
+    for y, dsl_row in enumerate(dsl_lines):
+        row = []
+        dsl_cells = dsl_row.split("|")
+        dsl_cells = [c for c in dsl_cells if c]
+
+        for x, dsl_cell in enumerate(dsl_cells):
+            tile_type = tile_type_dict[dsl_cell]
+            row.append(tile_type(x,y) if tile_type else None)
+
+        world_map.append(row)
 
 def tile_at(x,y):
     if x < 0 or y < 0:
