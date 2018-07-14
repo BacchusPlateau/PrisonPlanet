@@ -8,11 +8,12 @@ class Player:
     def __init__(self):
         self.inventory = [items.Crysknife(),
                           items.Stunner(),
-                          'Credits(5)',
                           items.Manna()]
-        self.x = 1
-        self.y = 2
+        self.x = world.start_title_location[0]
+        self.y = world.start_title_location[1]
         self.hp = self.MAX_HITPOINTS
+        self.credits = 5
+        self.victory = False
 
     def attack(self):
         best_weapon = self.most_powerful_weapon()
@@ -48,6 +49,9 @@ class Player:
             except (ValueError, IndexError):
                 print("Invalid choice.")
 
+    def is_alive(self):
+        return self.hp > 0
+
     def most_powerful_weapon(self):
         max_damage = 0
         best_weapon = None
@@ -63,6 +67,7 @@ class Player:
 
     def print_inventory(self):
         print("Inventory:")
+        print("Credits: {}".format(self.credits))
         for item in self.inventory:
             print('* ' + str(item))
         best_weapon = self.most_powerful_weapon()
@@ -70,7 +75,12 @@ class Player:
 
     def quit(self):
         self.QUIT_ACTION = True
- 
+    
+    def trade(self):
+        room = world.tile_at(self.x, self.y)
+        room.check_if_trade(self)
+
+    #movement
     def move(self, dx, dy):
         self.x += dx
         self.y += dy

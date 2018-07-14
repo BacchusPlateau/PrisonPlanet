@@ -9,11 +9,13 @@ class Manna(Consumable):
     def __init__(self):
         self.name = "Manna"
         self.healing_value = 10
+        self.value = 5
 
 class Medpack(Consumable):
     def __init__(self):
         self.name = "Medpack"
         self.healing_value = 50
+        self.value = 20
 
 
 class Weapon:
@@ -28,6 +30,7 @@ class Crysknife(Weapon):
         self.name = "Crysknife"
         self.description = "A deadly blade carved from a tooth of Shai Hulud."
         self.damage = 5
+        self.value = 20
 
 class Lasegun(Weapon):
     def __init__(self):
@@ -35,6 +38,7 @@ class Lasegun(Weapon):
         self.description = "Now this is what I call a weapon, " \
             "just point and watch the fun."
         self.damage = 20
+        self.value = 100
 
 class Stunner(Weapon):
     def __init__(self):
@@ -42,3 +46,4 @@ class Stunner(Weapon):
         self.description = "A short staff with a cone projector at one end. " \
             "Causes painful blisters when in range."
         self.damage = 10
+        self.value = 5

@@ -1,5 +1,6 @@
 import random
 import enemies
+import npc
 
 class MapTile:
     def __init__(self, x, y):
@@ -54,6 +55,28 @@ class EnemyTile(MapTile):
             player.hp = player.hp - self.enemy.damage
             print("Enemy does {} damage. You have {} HP remaining".format(self.enemy.damage, player.hp))
 
+class FindCreditsTile(MapTile):
+    def __init__(self, x, y):
+        self.credits = random.randint(1, 50)
+        self.credits_claimed = False
+        super().__init__(x,y)
+
+    def modify_player(self, player):
+        if not self.credits_claimed:
+            self.credits_claimed = True
+            player.credits = player.credits + self.credits
+            print("+{} credits added.".format(self.credits))
+
+    def intro_text(self):
+        if self.credits_claimed:
+            return """
+            Isn't this where you found those credits?  Too bad there aren't any more.
+            """
+        else:
+            return """
+            Your lucky day!  Someone dropped a few credit chips.  You pick them up.
+            """
+
 class StartTile(MapTile):
     def intro_text(self):
         return """
@@ -63,26 +86,86 @@ class StartTile(MapTile):
         move freely in all four cardinal directions from where you are now.
         """
 
+class TraderTile(MapTile):
+    def __init__(self, x, y):
+        self.trader = npc.Trader()
+        super().__init__(x,y)
+
+    def intro_text(self):
+        return """
+        A seasoned lifer prisoner quats in the shadows under a stairwell
+        shuffling credit chips like a casino gambler.  He looks like would
+        enjoy a bit of trade.
+        """
+
+    def check_if_trade(self, player):
+        while True:
+            print("Would you like to (B)uy or (S)ell, or (Q)uit?")
+            user_input = input()
+            if user_input in ['Q', 'q']:
+                return
+            elif user_input in ['B', 'b']:
+                print("Here's what's available to buy: ")
+                self.trade(buyer=player, seller=self.trader)
+            elif user_input in ['S', 's']:
+                print("Here's what's available to sell: ")
+                self.trade(buyer=self.trader, seller=player)
+            else:
+               print("Invalid choice.")
+
+    def swap(self, seller, buyer, item):
+        if item.value > buyer.credits:
+            print("That's too expensive")
+            return
+        seller.inventory.remove(item)
+        buyer.inventory.append(item)
+        seller.credits = seller.credits + item.value
+        buyer.credits = buyer.credits - item.value
+        print("Trade completed")
+
+    def trade(self, buyer, seller):
+        for i, item in enumerate(seller.inventory, 1):
+            print("{}. {} - {} Credits".format(i, item.name, item.value))
+        while True:
+            user_input = input("Choose an item or press Q to exit: ")
+            if user_input in ['q', 'Q']:
+                return
+            else:
+                try:
+                    choice = int(user_input)
+                    to_swap = seller.inventory[choice - 1]
+                    self.swap(seller, buyer, to_swap)
+                except ValueError:
+                    print("Invalid choice")
+
 class VictoryTile(MapTile):
+    def modify_player(self, player):
+        player.victory = True
+
     def intro_text(self):
         return """
         The stolen spacecraft roars into outer space and to freedom!
         You've escaped from the Prison Planet.
         """
 
+start_title_location = None
+
 world_dsl = """
-|  |VT|  |
-|  |EN|  |
-|EN|ST|EN|
-|  |EN|  |
+|EN|EN|VT|EN|EN|
+|  |  |  |  |EN|  
+|EN|FC|EN|  |TT|
+|  |EN|ST|FC|EN|
+|FC|  |EN|  |FC|
 """
 
 world_map = []
 
 tile_type_dict = {"VT" : VictoryTile,
                   "EN" : EnemyTile,
+                  "FC" : FindCreditsTile,
                   "ST" : StartTile,
-                  "  " : None}
+                  "TT" : TraderTile,
+                  "  " : BoringTile}
 
 def is_dsl_valid(dsl):
     if dsl.count("|ST|") != 1:
@@ -115,6 +198,9 @@ def parse_world_dsl():
 
         for x, dsl_cell in enumerate(dsl_cells):
             tile_type = tile_type_dict[dsl_cell]
+            if tile_type == StartTile:
+                global start_title_location
+                start_title_location = x, y
             row.append(tile_type(x,y) if tile_type else None)
 
         world_map.append(row)

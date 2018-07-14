@@ -11,7 +11,7 @@ def action_adder(action_dict, hotkey, action, name):
 
 def choose_action(room, player):
     action = None
-    print()
+    print(" ")
 
     while not action:
         available_actions = get_available_actions(room, player)
@@ -29,7 +29,8 @@ def get_available_actions(room, player):
     
     if player.inventory:
         action_adder(actions, 'i', player.print_inventory, "Print inventory")
-
+    if isinstance(room, world.TraderTile):
+        action_adder(actions, 't', player.trade, "Trade")
     if isinstance(room, world.EnemyTile) and room.enemy.is_alive():
         action_adder(actions, 'a', player.attack, "Attack")
     else:
@@ -58,10 +59,13 @@ def play():
     world.parse_world_dsl()
     player = Player()
 
-    while not player.QUIT_ACTION:
+    while not player.QUIT_ACTION and player.is_alive() and not player.victory:
         room = world.tile_at(player.x, player.y)
         print(room.intro_text())
         room.modify_player(player)
-        choose_action(room, player)
+        if player.is_alive() and not player.victory:
+            choose_action(room, player)
+        elif not player.is_alive():
+            print("All grows dark as your eyes close and the breath leaves your body.")
                 
 play()

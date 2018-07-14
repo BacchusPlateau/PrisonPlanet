@@ -27,6 +27,9 @@
     <Compile Include="items.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="npc.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="player.py">
       <SubType>Code</SubType>
     </Compile>
